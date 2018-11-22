@@ -34,6 +34,7 @@ public class MyServlet extends HttpServlet{
             System.out.println(cookie.getMaxAge());
         }
 
+        
         Cookie cookie = new Cookie("name", "abc");
         cookie.setMaxAge(5);
         cookie.setPath("/MyServlet");//устанавливает страницу, на которой будут отображаться эти кукис (только на ней)
