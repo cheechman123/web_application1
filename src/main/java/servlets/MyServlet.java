@@ -2,7 +2,6 @@ package servlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,88 +9,31 @@ import java.io.IOException;
 import java.sql.Connection;
 
 @WebServlet("/MyServlet")
-public class MyServlet extends HttpServlet{
+public class MyServlet extends HttpServlet {
 
     static Connection connection;
     static String userName = "root";
     static String password = "root";
-    static String connectionURL = "jdbc:mysql://localhost:3306/users"+
-            "?verifyServerCertificate=false"+
-            "&useSSL=false"+
-            "&requireSSL=false"+
-            "&useLegacyDatetimeCode=false"+
-            "&amp"+
+    static String connectionURL = "jdbc:mysql://localhost:3306/users" +
+            "?verifyServerCertificate=false" +
+            "&useSSL=false" +
+            "&requireSSL=false" +
+            "&useLegacyDatetimeCode=false" +
+            "&amp" +
             "&serverTimezone=UTC";
 
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Cookie[] cookies = request.getCookies();
-        for(Cookie cookie : cookies){
-            System.out.println(cookie.getName());
-            System.out.println(cookie.getValue());
-            System.out.println(cookie.getMaxAge());
-        }
-
-
-        Cookie cookie = new Cookie("name", "abc");
-        cookie.setMaxAge(5);
-        cookie.setPath("/MyServlet");//устанавливает страницу, на которой будут отображаться эти кукис (только на ней)
-        cookie.setDomain("/////////");//устанавливает домены, которые могут получить доступ к кукис
-        response.addCookie(cookie);
+        response.getWriter().write("a");
 
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        doGet(req, resp);
-    }
 
 
 }
 
-@WebServlet("/hello")
-class HelloServlet extends HttpServlet{
-
-    static Connection connection;
-    static String userName = "root";
-    static String password = "root";
-    static String connectionURL = "jdbc:mysql://localhost:3306/users"+
-            "?verifyServerCertificate=false"+
-            "&useSSL=false"+
-            "&requireSSL=false"+
-            "&useLegacyDatetimeCode=false"+
-            "&amp"+
-            "&serverTimezone=UTC";
-
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.getWriter().write("hello");
-
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        doGet(req, resp);
-    }
-
-
-}
 
 
 
@@ -255,10 +197,71 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     }
 
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    COOKIES
+
+    Cookie[] cookies = request.getCookies();
+        for(Cookie cookie : cookies){
+            System.out.println(cookie.getName());
+            System.out.println(cookie.getValue());
+            System.out.println(cookie.getMaxAge());
+        }
 
 
+        Cookie cookie = new Cookie("name", "abc");
+        cookie.setMaxAge(5);
+        cookie.setPath("/MyServlet");//устанавливает страницу, на которой будут отображаться эти кукис (только на ней)
+//        cookie.setDomain("/////////");//устанавливает домены, которые могут получить доступ к кукис
+        response.addCookie(cookie);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+SESSIONS
+
+HttpSession httpSession = request.getSession();
+        Enumeration<String> attributeNames = httpSession.getAttributeNames();
+        while(attributeNames.hasMoreElements()){
+            String attribute = attributeNames.nextElement();
+            System.out.println(attribute + " = " + httpSession.getAttribute(attribute));
+        }
+//        httpSession.setAttribute("one", "two");
+//        httpSession.removeAttribute("one");//удаляет аттрибут
+        httpSession.invalidate();//очищает сессию
+        System.out.println(httpSession.isNew());//проверяет, есть ли уже такая сессия
+        System.out.println(httpSession.getMaxInactiveInterval());//выводит время активности сессии
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ASYNCCONTEXT
+
+package servlets;
+
+import javax.servlet.AsyncContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+
+@WebServlet(value = "/ASyncServlet", asyncSupported = true)
+public class ASyncServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        AsyncContext asyncContext = req.getAsyncContext();
+        asyncContext.start(new Runnable() {
+            @Override
+            public void run() {
+                //some action
+            }
+        });//это нужно чтоб тут выполнялось какое-то действие, например, ожидание ответа, в отдельном потоке, чтоб это не мешало выполнению остальной части программы
+
+        asyncContext.complete();
+    }
+}
 
 
 

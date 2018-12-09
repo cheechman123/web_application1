@@ -16,5 +16,11 @@
         <property name="cacheDefaultTimezone" value="false" />
       </driver-properties>
     </data-source>
+    <data-source source="LOCAL" name="test" uuid="e1c6f7fd-138e-4b32-b247-a95c57c43b36">
+      <driver-ref>h2.unified</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.h2.Driver</jdbc-driver>
+      <jdbc-url>jdbc:h2:~/test</jdbc-url>
+    </data-source>
   </component>
 </project>

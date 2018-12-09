@@ -47,11 +47,6 @@
         <url-pattern>/thisIsJsp</url-pattern>
     </servlet-mapping>
 
-    <context-param>
-        <param-name>email</param-name>
-        <param-value>mail@mailexample.com</param-value>
-    </context-param>
-
 </web-app>
 
 
